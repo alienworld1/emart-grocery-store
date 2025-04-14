@@ -44,6 +44,32 @@ const Navbar = () => {
               >
                 Receive PO
               </Link>
+              <div className="relative inline-block text-left group">
+                {/* Basic text as trigger, replace with proper dropdown component later */}
+                <span className="text-gray-700 hover:bg-gray-100 hover:text-black px-3 py-2 rounded-md text-sm font-medium cursor-pointer">
+                  Catalog
+                </span>
+                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150 ease-in-out z-10">
+                  {/* Simple hover dropdown */}
+                  <div className="py-1" role="none">
+                    <Link
+                      href="/catalog/products/new"
+                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      Add Product
+                    </Link>
+                    <Link
+                      href="/catalog/categories/new"
+                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      Add Category
+                    </Link>
+                    {/* Add links to list categories/suppliers later */}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

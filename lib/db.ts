@@ -295,3 +295,20 @@ export async function getStockByCategory(): Promise<CategoryStockInfo[]> {
         ORDER BY SUM(i.quantity_on_hand) DESC;
     `);
 }
+
+export async function getCategoriesForSelect(): Promise<SelectOption[]> {
+  return query<SelectOption>(`
+    SELECT category_id as value, name as label
+    FROM categories
+    ORDER BY name;
+  `);
+}
+
+export async function getSuppliersForSelect(): Promise<SelectOption[]> {
+  return query<SelectOption>(`
+    SELECT supplier_id as value, name as label
+    FROM suppliers
+    WHERE is_active = TRUE
+    ORDER BY name;
+  `);
+}
