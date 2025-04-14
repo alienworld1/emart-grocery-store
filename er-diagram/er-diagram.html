@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ER Diagram - Emart Grocery Store</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .mermaid {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>E-R Diagram for Emart Grocery Store</h1>
+
+      <div class="mermaid">
+        erDiagram
+    %% Core entities
+    CATEGORIES {
+        INT category_id PK
+        VARCHAR name UK
+        TEXT description
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    SUPPLIERS {
+        INT supplier_id PK
+        VARCHAR name
+        VARCHAR email UK
+        VARCHAR phone
+        TEXT address
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    WAREHOUSES {
+        INT warehouse_id PK
+        VARCHAR name UK
+        TEXT location_address
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    PRODUCTS {
+        INT product_id PK
+        VARCHAR sku UK
+        VARCHAR name
+        TEXT description
+        INT category_id FK
+        INT supplier_id FK
+        VARCHAR unit_of_measure
+        NUMERIC purchase_price
+        NUMERIC selling_price
+        NUMERIC reorder_level
+        NUMERIC target_stock_level
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    INVENTORY {
+        BIGINT inventory_id PK
+        INT product_id FK
+        INT warehouse_id FK
+        NUMERIC quantity_on_hand
+        TIMESTAMPTZ last_updated_at
+    }
+
+    %% Transaction entities
+    STOCK_MOVEMENTS {
+        BIGINT movement_id PK
+        INT product_id FK
+        INT warehouse_id FK
+        VARCHAR movement_type
+        NUMERIC quantity_change
+        TIMESTAMPTZ movement_date
+        VARCHAR reference_id
+        TEXT notes
+        INT user_id FK
+    }
+
+    PURCHASE_ORDERS {
+        INT po_id PK
+        INT supplier_id FK
+        DATE order_date
+        DATE expected_delivery_date
+        VARCHAR status
+        NUMERIC total_amount
+        TEXT notes
+        INT created_by_user_id FK
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    PURCHASE_ORDER_ITEMS {
+        INT po_item_id PK
+        INT po_id FK
+        INT product_id FK
+        NUMERIC quantity_ordered
+        NUMERIC unit_price
+        NUMERIC quantity_received
+    }
+
+    STOCK_TRANSFERS {
+        INT transfer_id PK
+        INT from_warehouse_id FK
+        INT to_warehouse_id FK
+        DATE transfer_date
+        VARCHAR status
+        TEXT notes
+        INT initiated_by_user_id FK
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    STOCK_TRANSFER_ITEMS {
+        INT transfer_item_id PK
+        INT transfer_id FK
+        INT product_id FK
+        NUMERIC quantity
+    }
+
+    %% User management
+    USERS {
+        INT user_id PK
+        VARCHAR username UK
+        VARCHAR full_name
+        VARCHAR role
+        VARCHAR password_hash
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ last_login_at
+    }
+
+    %% Relationships - Product Management
+    CATEGORIES ||--o{ PRODUCTS : "categorizes"
+    SUPPLIERS ||--o{ PRODUCTS : "supplies"
+    PRODUCTS ||--o{ INVENTORY : "stocked as"
+    
+    %% Relationships - Inventory Management
+    WAREHOUSES ||--o{ INVENTORY : "contains"
+    WAREHOUSES ||--o{ STOCK_MOVEMENTS : "location of"
+    
+    %% Relationships - Stock Transfers
+    WAREHOUSES ||--o{ STOCK_TRANSFERS : "source (from_warehouse_id)"
+    WAREHOUSES ||--o{ STOCK_TRANSFERS : "destination (to_warehouse_id)"
+    STOCK_TRANSFERS ||--|{ STOCK_TRANSFER_ITEMS : "contains"
+    PRODUCTS ||--o{ STOCK_TRANSFER_ITEMS : "transferred as"
+    
+    %% Relationships - Purchasing
+    SUPPLIERS ||--|{ PURCHASE_ORDERS : "receives"
+    PURCHASE_ORDERS ||--|{ PURCHASE_ORDER_ITEMS : "includes"
+    PRODUCTS ||--o{ PURCHASE_ORDER_ITEMS : "ordered as"
+    
+    %% Relationships - Stock Movements
+    PRODUCTS ||--o{ STOCK_MOVEMENTS : "subject of"
+    
+    %% Relationships - User Actions
+    USERS ||--o{ STOCK_MOVEMENTS : "records"
+    USERS ||--o{ PURCHASE_ORDERS : "creates"
+    USERS ||--o{ STOCK_TRANSFERS : "initiates"
+      </div>
+    </div>
+
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        securityLevel: 'loose',
+        er: {
+          diagramPadding: 20,
+          layoutDirection: 'TB',
+          minEntityWidth: 100,
+          minEntityHeight: 75,
+          entityPadding: 15,
+          stroke: 'gray',
+          fill: 'honeydew',
+          fontSize: 12,
+        },
+      });
+    </script>
+  </body>
+</html>
